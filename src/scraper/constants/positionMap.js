@@ -1,0 +1,17 @@
+export const POSITION_MAP = {
+  Goalkeeper: "PO",
+  "Centre-Back": "CT",
+  "Left-Back": "LI",
+  "Right-Back": "LD",
+  Defender: "CT",
+  "Defensive Midfield": "MCD",
+  "Central Midfield": "MC",
+  "Attacking Midfield": "MO",
+  "Left Midfield": "MI",
+  "Right Midfield": "MD",
+  "Left Winger": "EI",
+  "Right Winger": "ED",
+  "Second Striker": "SD",
+  "Centre-Forward": "DC",
+  Striker: "DC",
+};
