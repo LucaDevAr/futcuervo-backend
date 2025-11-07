@@ -49,8 +49,8 @@ export const register = async (req, res) => {
     // Configurar cookie de sesión
     res.cookie("sessionId", sessionId, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "none",
+      secure: true,
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
     });
 
@@ -104,8 +104,8 @@ export const login = async (req, res) => {
     // Configurar cookie de sesión
     res.cookie("sessionId", sessionId, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "none",
+      secure: true,
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
     });
 
@@ -204,8 +204,8 @@ export const googleCallback = async (req, res) => {
     // Configurar cookie de sesión
     res.cookie("sessionId", sessionId, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "none",
+      secure: true,
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 días
     });
 
