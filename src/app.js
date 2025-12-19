@@ -67,11 +67,10 @@ app.use(
   })
 );
 
-app.use(express.json());
-// 🔒 antes de rutas
-app.use("/api/auth", authLimiter);
+app.use(express.json()); // 🔒 Antes de rutas
+app.use(globalLimiter); // Global, ligera
+app.use("/api/auth", authLimiter); // Auth routes
 app.use("/api", apiLimiter);
-app.use(globalLimiter);
 
 // Debug middleware global
 app.use((req, res, next) => {
