@@ -41,7 +41,8 @@ const DEBUG =
   process.env.NODE_ENV === "development" || process.env.DEBUG_LOGS === "true";
 
 const allowedOrigins = [
-  process.env.FRONTEND_URL,
+  "https://futcuervo.com",
+  "https://www.futcuervo.com",
   "http://localhost:3000",
 ].filter(Boolean);
 
