@@ -7,7 +7,11 @@ import {
   signRefreshToken,
   verifyRefreshToken,
 } from "../utils/jwt.js";
-import { setAuthCookies, clearAuthCookies } from "../utils/cookies.js";
+import {
+  setAuthCookies,
+  clearAuthCookies,
+  cookieOptions,
+} from "../utils/cookies.js";
 import ClubMember from "../models/ClubMember.js";
 import { getAllAttemptsByUser } from "../services/gameStatsService.js";
 
@@ -283,10 +287,7 @@ export const refresh = async (req, res) => {
     });
 
     res.cookie("accessToken", newAccess, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
+      ...cookieOptions,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 

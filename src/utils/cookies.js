@@ -4,7 +4,7 @@ export const cookieOptions = {
   secure: process.env.NODE_ENV === "production", // true en prod
   sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   path: "/",
-  // maxAge se define por cookie si hace falta
+  domain: process.env.NODE_ENV === "production" ? ".futcuervo.com" : undefined,
 };
 
 export const setAuthCookies = (res, accessToken, refreshToken) => {
