@@ -50,8 +50,8 @@ export const getPlayerGameById = async (req, res) => {
 // Create player game
 export const createPlayerGame = async (req, res) => {
   try {
-    console.log("[v0] createPlayerGame - Starting");
-    console.log("[v0] Request body:", req.body);
+    // console.log("[v0] createPlayerGame - Starting");
+    // console.log("[v0] Request body:", req.body);
 
     const { date, player, clubId, selectedName } = req.body;
 
@@ -83,7 +83,7 @@ export const createPlayerGame = async (req, res) => {
       ...(clubId ? { clubId } : {}),
     });
 
-    console.log("[v0] Player game created:", game);
+    // console.log("[v0] Player game created:", game);
 
     res.status(201).json({
       success: true,
@@ -214,8 +214,8 @@ export const getCareerGameById = async (req, res) => {
 // Create career game
 export const createCareerGame = async (req, res) => {
   try {
-    console.log("[v0] createCareerGame - Starting");
-    console.log("[v0] Request body:", req.body);
+    // console.log("[v0] createCareerGame - Starting");
+    // console.log("[v0] Request body:", req.body);
 
     const { date, player, clubId } = req.body;
 
@@ -246,7 +246,7 @@ export const createCareerGame = async (req, res) => {
       ...(clubId ? { clubId } : {}),
     });
 
-    console.log("[v0] Career game created:", game);
+    // console.log("[v0] Career game created:", game);
 
     res.status(201).json({
       success: true,

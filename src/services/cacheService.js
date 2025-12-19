@@ -31,16 +31,16 @@ const getCacheKey = (type, identifier) => {
 export const getFromCache = async (type, identifier) => {
   try {
     const key = getCacheKey(type, identifier);
-    console.log("[v0] Cache GET attempt for key:", key);
+    // console.log("[v0] Cache GET attempt for key:", key);
 
     const cached = await redisClient.get(key);
     if (cached) {
-      console.log("[v0] Cache HIT for key:", key);
+      // console.log("[v0] Cache HIT for key:", key);
       const parsed = JSON.parse(cached);
       return { ...parsed, fromCache: true };
     }
 
-    console.log("[v0] Cache MISS for key:", key);
+    // console.log("[v0] Cache MISS for key:", key);
     return null;
   } catch (error) {
     console.error("[v0] Cache get error:", error);
@@ -60,13 +60,13 @@ export const setCache = async (type, identifier, data, customTTL = null) => {
         ? CACHE_TTL[type.toUpperCase()]()
         : 300);
 
-    console.log(
-      "[v0] Cache SET for key:",
-      key,
-      "TTL:",
-      ttl,
-      "seconds (until midnight)"
-    );
+    // console.log(
+    //   "[v0] Cache SET for key:",
+    //   key,
+    //   "TTL:",
+    //   ttl,
+    //   "seconds (until midnight)"
+    // );
 
     const dataWithMeta = {
       ...data,
@@ -76,7 +76,7 @@ export const setCache = async (type, identifier, data, customTTL = null) => {
     };
 
     await redisClient.set(key, JSON.stringify(dataWithMeta), { EX: ttl });
-    console.log("[v0] Cache SET successful for key:", key);
+    // console.log("[v0] Cache SET successful for key:", key);
     return true;
   } catch (error) {
     console.error("[v0] Cache set error:", error);
@@ -90,7 +90,7 @@ export const setCache = async (type, identifier, data, customTTL = null) => {
 export const invalidateCache = async (type, identifier) => {
   try {
     const key = getCacheKey(type, identifier);
-    console.log("[v0] Cache INVALIDATE for key:", key);
+    // console.log("[v0] Cache INVALIDATE for key:", key);
     await redisClient.del(key);
     return true;
   } catch (error) {
@@ -116,7 +116,7 @@ export const getCachedStats = async (type, identifier, fallbackFn) => {
 
   if (!data && fallbackFn) {
     // Si no está en cache, ejecutar función fallback
-    console.log("[v0] Executing fallback function for:", type, identifier);
+    // console.log("[v0] Executing fallback function for:", type, identifier);
     data = await fallbackFn();
     if (data) {
       // Guardar en cache para próximas consultas
@@ -135,12 +135,12 @@ export const invalidateCachePattern = async (pattern) => {
   try {
     const keys = await redisClient.keys(`game_stats:${pattern}*`);
     if (keys.length > 0) {
-      console.log(
-        "[v0] Invalidating cache pattern:",
-        pattern,
-        "Keys:",
-        keys.length
-      );
+      // console.log(
+      //   "[v0] Invalidating cache pattern:",
+      //   pattern,
+      //   "Keys:",
+      //   keys.length
+      // );
       await redisClient.del(keys);
     }
     return true;
@@ -157,7 +157,7 @@ export const clearAllStatsCache = async () => {
   try {
     const keys = await redisClient.keys("game_stats:*");
     if (keys.length > 0) {
-      console.log("[v0] Clearing all stats cache, keys:", keys.length);
+      // console.log("[v0] Clearing all stats cache, keys:", keys.length);
       await redisClient.del(keys);
     }
     return true;
@@ -187,13 +187,13 @@ export const setPlayersCache = async (identifier, data, ttl = null) => {
     };
 
     await redisClient.set(key, JSON.stringify(dataToCache), { EX: cacheTTL });
-    console.log(
-      "[v1] Players cache SET for key:",
-      key,
-      "TTL:",
-      cacheTTL,
-      "seconds (until midnight)"
-    );
+    // console.log(
+    //   "[v1] Players cache SET for key:",
+    //   key,
+    //   "TTL:",
+    //   cacheTTL,
+    //   "seconds (until midnight)"
+    // );
     return true;
   } catch (err) {
     console.error("[v1] Error setting players cache:", err);
@@ -210,19 +210,19 @@ export const getPlayersCache = async (identifier) => {
     const cached = await redisClient.get(key);
 
     if (!cached) {
-      console.log("[v1] Players cache MISS for key:", key);
+      // console.log("[v1] Players cache MISS for key:", key);
       return null;
     }
 
     const parsed = JSON.parse(cached);
 
     if (parsed.cacheDay && !isCachedToday(parsed.cacheDay)) {
-      console.log("[v1] Players cache OUTDATED (old day) for key:", key);
+      // console.log("[v1] Players cache OUTDATED (old day) for key:", key);
       await redisClient.del(key);
       return null;
     }
 
-    console.log("[v1] Players cache HIT for key:", key);
+    // console.log("[v1] Players cache HIT for key:", key);
     return parsed.payload;
   } catch (err) {
     console.error("[v1] Error getting players cache:", err);
@@ -240,9 +240,9 @@ export const clearPlayersCache = async (identifier = null) => {
 
     if (keys.length > 0) {
       await redisClient.del(keys);
-      console.log("[v1] Players cache cleared, keys:", keys.length);
+      // console.log("[v1] Players cache cleared, keys:", keys.length);
     } else {
-      console.log("[v1] No players cache found to clear");
+      // console.log("[v1] No players cache found to clear");
     }
 
     return true;
@@ -268,19 +268,19 @@ export const getClubsCache = async () => {
     const cached = await redisClient.get(key);
 
     if (!cached) {
-      console.log("[v0] Clubs cache MISS");
+      // console.log("[v0] Clubs cache MISS");
       return null;
     }
 
     const parsed = JSON.parse(cached);
 
     if (parsed.cacheDay && !isCachedToday(parsed.cacheDay)) {
-      console.log("[v0] Clubs cache OUTDATED (old day)");
+      // console.log("[v0] Clubs cache OUTDATED (old day)");
       await redisClient.del(key);
       return null;
     }
 
-    console.log("[v0] Clubs cache HIT");
+    // console.log("[v0] Clubs cache HIT");
     return parsed;
   } catch (err) {
     console.error("[v0] Error getting clubs cache:", err);
@@ -303,11 +303,11 @@ export const setClubsCache = async (clubs) => {
     };
 
     await redisClient.set(key, JSON.stringify(dataToCache), { EX: ttl });
-    console.log(
-      "[v0] Clubs cache SET with TTL until midnight:",
-      ttl,
-      "seconds"
-    );
+    // console.log(
+    //   "[v0] Clubs cache SET with TTL until midnight:",
+    //   ttl,
+    //   "seconds"
+    // );
     return true;
   } catch (err) {
     console.error("[v0] Error setting clubs cache:", err);
@@ -322,7 +322,7 @@ export const clearClubsCache = async () => {
   try {
     const key = getClubsCacheKey();
     await redisClient.del(key);
-    console.log("[v0] Clubs cache cleared");
+    // console.log("[v0] Clubs cache cleared");
     return true;
   } catch (err) {
     console.error("[v0] Error clearing clubs cache:", err);
@@ -346,7 +346,7 @@ export const clearDailyGamesCache = async () => {
       }
     }
 
-    console.log(`[v0] Cleared ${total} daily games cache keys`);
+    // console.log(`[v0] Cleared ${total} daily games cache keys`);
     return true;
   } catch (error) {
     console.error("[v0] Error clearing daily games cache:", error);
@@ -363,7 +363,7 @@ export const getAllDailyGamesCache = async () => {
     const cached = await redisClient.get(key);
 
     if (!cached) {
-      console.log("[v1] DailyGames cache MISS");
+      // console.log("[v1] DailyGames cache MISS");
       return null;
     }
 
@@ -371,12 +371,12 @@ export const getAllDailyGamesCache = async () => {
 
     const today = getYYYYMMDD();
     if (parsed.cacheDay !== today) {
-      console.log("[v1] Cache OUTDATED → invalidated automatically");
+      // console.log("[v1] Cache OUTDATED → invalidated automatically");
       await redisClient.del(key);
       return null;
     }
 
-    console.log("[v1] DailyGames cache HIT");
+    // console.log("[v1] DailyGames cache HIT");
     return parsed.payload;
   } catch (error) {
     console.error("[v1] Error getting daily games cache:", error);
@@ -400,7 +400,7 @@ export const cacheAllDailyGames = async (data) => {
 
     await redisClient.set(key, JSON.stringify(toCache), { EX: ttl });
 
-    console.log("[v1] DailyGames cache SET (until midnight):", ttl, "seconds");
+    // console.log("[v1] DailyGames cache SET (until midnight):", ttl, "seconds");
     return true;
   } catch (error) {
     console.error("[v1] Error setting daily games cache:", error);
@@ -421,19 +421,19 @@ export const getCoachesCache = async (identifier) => {
     const cached = await redisClient.get(key);
 
     if (!cached) {
-      console.log("[v0] Coaches cache MISS for key:", key);
+      // console.log("[v0] Coaches cache MISS for key:", key);
       return null;
     }
 
     const parsed = JSON.parse(cached);
 
     if (parsed.cacheDay && !isCachedToday(parsed.cacheDay)) {
-      console.log("[v0] Coaches cache OUTDATED (old day) for key:", key);
+      // console.log("[v0] Coaches cache OUTDATED (old day) for key:", key);
       await redisClient.del(key);
       return null;
     }
 
-    console.log("[v0] Coaches cache HIT for key:", key);
+    // console.log("[v0] Coaches cache HIT for key:", key);
     return parsed.payload;
   } catch (err) {
     console.error("[v0] Error getting coaches cache:", err);
@@ -457,13 +457,13 @@ export const setCoachesCache = async (identifier, data, ttl = null) => {
     };
 
     await redisClient.set(key, JSON.stringify(dataToCache), { EX: cacheTTL });
-    console.log(
-      "[v0] Coaches cache SET for key:",
-      key,
-      "TTL:",
-      cacheTTL,
-      "seconds (until midnight)"
-    );
+    // console.log(
+    //   "[v0] Coaches cache SET for key:",
+    //   key,
+    //   "TTL:",
+    //   cacheTTL,
+    //   "seconds (until midnight)"
+    // );
     return true;
   } catch (err) {
     console.error("[v0] Error setting coaches cache:", err);
@@ -481,9 +481,9 @@ export const clearCoachesCache = async (identifier = null) => {
 
     if (keys.length > 0) {
       await redisClient.del(keys);
-      console.log("[v0] Coaches cache cleared, keys:", keys.length);
+      // console.log("[v0] Coaches cache cleared, keys:", keys.length);
     } else {
-      console.log("[v0] No coaches cache found to clear");
+      // console.log("[v0] No coaches cache found to clear");
     }
 
     return true;
@@ -506,19 +506,19 @@ export const getLeaguesCache = async (identifier) => {
     const cached = await redisClient.get(key);
 
     if (!cached) {
-      console.log("[v0] Leagues cache MISS for key:", key);
+      // console.log("[v0] Leagues cache MISS for key:", key);
       return null;
     }
 
     const parsed = JSON.parse(cached);
 
     if (parsed.cacheDay && !isCachedToday(parsed.cacheDay)) {
-      console.log("[v0] Leagues cache OUTDATED (old day) for key:", key);
+      // console.log("[v0] Leagues cache OUTDATED (old day) for key:", key);
       await redisClient.del(key);
       return null;
     }
 
-    console.log("[v0] Leagues cache HIT for key:", key);
+    // console.log("[v0] Leagues cache HIT for key:", key);
     return parsed.payload;
   } catch (err) {
     console.error("[v0] Error getting leagues cache:", err);
@@ -542,13 +542,13 @@ export const setLeaguesCache = async (identifier, data, ttl = null) => {
     };
 
     await redisClient.set(key, JSON.stringify(dataToCache), { EX: cacheTTL });
-    console.log(
-      "[v0] Leagues cache SET for key:",
-      key,
-      "TTL:",
-      cacheTTL,
-      "seconds (until midnight)"
-    );
+    // console.log(
+    //   "[v0] Leagues cache SET for key:",
+    //   key,
+    //   "TTL:",
+    //   cacheTTL,
+    //   "seconds (until midnight)"
+    // );
     return true;
   } catch (err) {
     console.error("[v0] Error setting leagues cache:", err);
@@ -566,9 +566,9 @@ export const clearLeaguesCache = async (identifier = null) => {
 
     if (keys.length > 0) {
       await redisClient.del(keys);
-      console.log("[v0] Leagues cache cleared, keys:", keys.length);
+      // console.log("[v0] Leagues cache cleared, keys:", keys.length);
     } else {
-      console.log("[v0] No leagues cache found to clear");
+      // console.log("[v0] No leagues cache found to clear");
     }
 
     return true;

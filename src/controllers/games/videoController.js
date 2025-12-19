@@ -2,9 +2,9 @@ import { saveGameAttempt } from "../../services/gameStatsService.js";
 
 export const saveVideoGameAttempt = async (req, res) => {
   try {
-    console.log("[v0] saveVideoGameAttempt - Starting");
-    console.log("[v0] Request body:", req.body);
-    console.log("[v0] User:", req.user);
+    // console.log("[v0] saveVideoGameAttempt - Starting");
+    // console.log("[v0] Request body:", req.body);
+    // console.log("[v0] User:", req.user);
 
     const userId = req.user._id || req.user.id;
 
@@ -18,13 +18,13 @@ export const saveVideoGameAttempt = async (req, res) => {
       date: new Date(),
     };
 
-    console.log("[v0] Saving video game attempt:", {
-      userId,
-      gameType: gameData.gameType,
-      won: gameData.won,
-      hintsUsed: gameData.hintsUsed,
-      streak: gameData.streak,
-    });
+    // console.log("[v0] Saving video game attempt:", {
+    //   userId,
+    //   gameType: gameData.gameType,
+    //   won: gameData.won,
+    //   hintsUsed: gameData.hintsUsed,
+    //   streak: gameData.streak,
+    // });
 
     const savedAttempt = await saveGameAttempt(userId, gameData);
 

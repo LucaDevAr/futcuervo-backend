@@ -2,9 +2,9 @@ import { saveGameAttempt } from "../../services/gameStatsService.js";
 
 export const savePlayerGameAttempt = async (req, res) => {
   try {
-    console.log("[v1] savePlayerGameAttempt - Starting");
-    console.log("[v1] Request body:", req.body);
-    console.log("[v1] User:", req.user);
+    // console.log("[v1] savePlayerGameAttempt - Starting");
+    // console.log("[v1] Request body:", req.body);
+    // console.log("[v1] User:", req.user);
 
     const userId = req.user?._id || req.user?.id;
     if (!userId) {
@@ -40,13 +40,13 @@ export const savePlayerGameAttempt = async (req, res) => {
       gameData: gameData || {}, // ✅ SIN PROCESAR, PASA CRUDO
     };
 
-    console.log("[v1] Saving player game attempt:", {
-      userId,
-      clubId,
-      won: gameAttempt.won,
-      streak: gameAttempt.streak,
-      gameMode: gameAttempt.gameMode,
-    });
+    // console.log("[v1] Saving player game attempt:", {
+    //   userId,
+    //   clubId,
+    //   won: gameAttempt.won,
+    //   streak: gameAttempt.streak,
+    //   gameMode: gameAttempt.gameMode,
+    // });
 
     // ✅ Save/update respetando unique index
     const savedAttempt = await saveGameAttempt(userId, gameAttempt);

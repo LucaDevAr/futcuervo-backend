@@ -40,12 +40,18 @@ app.set("trust proxy", 1); // 👈 Necesario en Railway
 const DEBUG =
   process.env.NODE_ENV === "development" || process.env.DEBUG_LOGS === "true";
 
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "http://localhost:3000",
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: [process.env.FRONTEND_URL, "http://localhost:3000"],
+    origin: allowedOrigins,
     credentials: true,
   })
 );
+
 app.use(cookieParser());
 
 app.use(
@@ -61,11 +67,11 @@ app.use(
   })
 );
 
-// app.use(globalLimiter);
-// app.use("/api/auth", authLimiter);
-// app.use("/api/", apiLimiter);
-
 app.use(express.json());
+// 🔒 antes de rutas
+app.use("/api/auth", authLimiter);
+app.use("/api", apiLimiter);
+app.use(globalLimiter);
 
 // Debug middleware global
 app.use((req, res, next) => {

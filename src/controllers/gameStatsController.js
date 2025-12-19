@@ -8,17 +8,17 @@ import { isValidGameType, getClubKeyFromId } from "../config/clubGames.js";
 
 export const getUserLastAttempts = async (req, res) => {
   try {
-    console.log("[v0] getUserLastAttempts - req.user:", req.user);
+    // console.log("[v0] getUserLastAttempts - req.user:", req.user);
 
     const userId = req.user?._id || req.user?.id;
     const clubId = req.query.clubId || null;
 
     if (!userId) {
-      console.log("[v0] No user ID found in request");
+      // console.log("[v0] No user ID found in request");
       return res.status(401).json({ error: "Not authenticated" });
     }
 
-    console.log("[v0] Fetching stats for userId:", userId, "clubId:", clubId);
+    // console.log("[v0] Fetching stats for userId:", userId, "clubId:", clubId);
 
     const cacheIdentifier = clubId
       ? `${userId.toString()}:${clubId}`
@@ -30,21 +30,21 @@ export const getUserLastAttempts = async (req, res) => {
       cacheIdentifier,
       async () => {
         // Función fallback si no está en cache
-        console.log(
-          "[v0] Cache miss, fetching from database for clubId:",
-          clubId
-        );
+        // console.log(
+        //   "[v0] Cache miss, fetching from database for clubId:",
+        //   clubId
+        // );
         return await getLastAttemptsByUser(userId.toString(), clubId);
       }
     );
 
-    console.log("[v0] Returning cached/fresh data:", {
-      totalAttempts: Object.keys(result.lastAttempts).filter(
-        (key) => result.lastAttempts[key] !== null
-      ).length,
-      totalGames: result.totalGames,
-      fromCache: result.fromCache || false,
-    });
+    // console.log("[v0] Returning cached/fresh data:", {
+    //   totalAttempts: Object.keys(result.lastAttempts).filter(
+    //     (key) => result.lastAttempts[key] !== null
+    //   ).length,
+    //   totalGames: result.totalGames,
+    //   fromCache: result.fromCache || false,
+    // });
 
     return res.json(result);
   } catch (error) {
@@ -64,9 +64,9 @@ export const createGameAttempt = async (req, res) => {
 
     const clubKey = await getClubKeyFromId(gameData.clubId);
     if (!isValidGameType(clubKey, gameData.gameType)) {
-      console.log(
-        `[v0] Invalid gameType "${gameData.gameType}" for club "${clubKey}"`
-      );
+      // console.log(
+      //   `[v0] Invalid gameType "${gameData.gameType}" for club "${clubKey}"`
+      // );
       return res.status(400).json({
         error: `Game type "${gameData.gameType}" is not available for this club`,
       });
@@ -88,15 +88,15 @@ export const getAllUserAttempts = async (req, res) => {
       return res.status(401).json({ error: "Not authenticated" });
     }
 
-    console.log("[/attempts/all] Fetching ALL attempts for user:", userId);
+    // console.log("[/attempts/all] Fetching ALL attempts for user:", userId);
 
     // 👉 usar exactamente la misma llamada que /auth/me
     const result = await getAllAttemptsByUser(userId);
 
-    console.log(
-      "[/attempts/all] loaded clubs:",
-      Object.keys(result.attemptsByClub).length
-    );
+    // console.log(
+    //   "[/attempts/all] loaded clubs:",
+    //   Object.keys(result.attemptsByClub).length
+    // );
 
     // 👉 devolver EXACTAMENTE lo mismo que /auth/me
     return res.json({

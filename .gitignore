@@ -1,4 +1,15 @@
+# Dependencias
 node_modules/
+
+# Entorno
 .env
+
+# Builds
 dist/
 build/
+
+# Logs
+LOG.md
+
+# Scraper
+src/scraper/

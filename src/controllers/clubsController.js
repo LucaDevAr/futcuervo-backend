@@ -6,15 +6,15 @@ import { getClubsCache, setClubsCache } from "../services/cacheService.js";
  */
 export const getAllClubs = async (req, res) => {
   try {
-    console.log("[v0] GET /api/clubs - Fetching all clubs");
+    // console.log("[v0] GET /api/clubs - Fetching all clubs");
 
     // Try to get from cache first
     const cachedClubs = await getClubsCache();
     if (cachedClubs) {
-      console.log(
-        "[v0] Returning clubs from cache:",
-        cachedClubs.clubs?.length || 0
-      );
+      // console.log(
+      //   "[v0] Returning clubs from cache:",
+      //   cachedClubs.clubs?.length || 0
+      // );
       return res.json({
         clubs: cachedClubs.clubs,
         fromCache: true,
@@ -23,11 +23,11 @@ export const getAllClubs = async (req, res) => {
     }
 
     // If not in cache, fetch from database
-    console.log("[v0] Cache miss, fetching from database");
+    // console.log("[v0] Cache miss, fetching from database");
 
     const clubs = await Club.find({}).sort({ name: 1 }).lean();
 
-    console.log("[v0] Fetched clubs from DB:", clubs.length);
+    // console.log("[v0] Fetched clubs from DB:", clubs.length);
 
     // Cache the result
     await setClubsCache(clubs);

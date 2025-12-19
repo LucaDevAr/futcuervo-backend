@@ -8,12 +8,12 @@ import {
 // Get all leagues
 export const getAllLeagues = async (req, res) => {
   try {
-    console.log("[v0] GET /api/admin/leagues - Fetching all leagues");
+    // console.log("[v0] GET /api/admin/leagues - Fetching all leagues");
 
     // Try to get from cache first
     const cachedLeagues = await getLeaguesCache("all");
     if (cachedLeagues) {
-      console.log("[v0] Returning leagues from cache:", cachedLeagues.length);
+      // console.log("[v0] Returning leagues from cache:", cachedLeagues.length);
       return res.json({
         leagues: cachedLeagues,
         fromCache: true,
@@ -21,12 +21,11 @@ export const getAllLeagues = async (req, res) => {
     }
 
     // If not in cache, fetch from database
-    console.log("[v0] Cache miss, fetching leagues from database");
+    // console.log("[v0] Cache miss, fetching leagues from database");
 
     const leagues = await League.find({}).sort({ name: 1 }).lean();
 
-    console.log("[v0] Fetched leagues from DB:", leagues.length);
-
+    // console.log("[v0] Fetched leagues from DB:", leagues.length);
     // Cache the result until midnight
     await setLeaguesCache("all", leagues);
 

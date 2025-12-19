@@ -7,12 +7,12 @@ import { getCoachesCache, setCoachesCache } from "../services/cacheService.js";
  */
 export const getAllCoaches = async (req, res) => {
   try {
-    console.log("[v0] GET /api/coaches - Fetching all coaches");
+    // console.log("[v0] GET /api/coaches - Fetching all coaches");
 
     // Try to get from cache first
     const cachedCoaches = await getCoachesCache("all");
     if (cachedCoaches) {
-      console.log("[v0] Returning coaches from cache:", cachedCoaches.length);
+      // console.log("[v0] Returning coaches from cache:", cachedCoaches.length);
       return res.json({
         coaches: cachedCoaches,
         fromCache: true,
@@ -20,7 +20,7 @@ export const getAllCoaches = async (req, res) => {
     }
 
     // If not in cache, fetch from database
-    console.log("[v0] Cache miss, fetching coaches from database");
+    // console.log("[v0] Cache miss, fetching coaches from database");
 
     const coaches = await Coach.find({})
       .populate({
@@ -34,7 +34,7 @@ export const getAllCoaches = async (req, res) => {
       .sort({ fullName: 1 })
       .lean();
 
-    console.log("[v0] Fetched coaches from DB:", coaches.length);
+    // console.log("[v0] Fetched coaches from DB:", coaches.length);
 
     // Cache the result
     await setCoachesCache("all", coaches);
@@ -97,17 +97,17 @@ export const getCoachesByClubId = async (req, res) => {
       return res.status(400).json({ message: "Invalid clubId format" });
     }
 
-    console.log(
-      `[v0] Fetching coaches with club ${clubId} in their careerPath`
-    );
+    // console.log(
+    //   `[v0] Fetching coaches with club ${clubId} in their careerPath`
+    // );
 
     // Try to get from cache first
     const cachedCoaches = await getCoachesCache(`club_${clubId}`);
     if (cachedCoaches) {
-      console.log(
-        `[v0] Returning coaches from cache for club ${clubId}:`,
-        cachedCoaches.length
-      );
+      // console.log(
+      //   `[v0] Returning coaches from cache for club ${clubId}:`,
+      //   cachedCoaches.length
+      // );
       return res.json({
         coaches: cachedCoaches,
         fromCache: true,
@@ -129,8 +129,7 @@ export const getCoachesByClubId = async (req, res) => {
       .sort({ fullName: 1 })
       .lean();
 
-    console.log(`[v0] Found ${coaches.length} coaches for club ${clubId}`);
-
+    // console.log(`[v0] Found ${coaches.length} coaches for club ${clubId}`);
     // Cache the result
     await setCoachesCache(`club_${clubId}`, coaches);
 

@@ -13,22 +13,22 @@ const redisUrl = REDIS_PASSWORD
   ? `redis://default:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}`
   : `redis://${REDIS_HOST}:${REDIS_PORT}`;
 
-console.log("[Redis] Intentando conectar a:", redisUrl);
+// console.log("[Redis] Intentando conectar a:", redisUrl);
 
 export const redisClient = createClient({
   url: redisUrl,
   socket: {
     family: 0,
     reconnectStrategy: (retries) => {
-      console.log(`[Redis] Reintentando conexión… intento #${retries}`);
+      // console.log(`[Redis] Reintentando conexión… intento #${retries}`);
       return Math.min(retries * 50, 500);
     },
   },
 });
 
-redisClient.on("connect", () =>
-  console.log("[Redis] ✅ Conectado correctamente a Redis")
-);
+redisClient.on("connect", () => {
+  // console.log("[Redis] ✅ Conectado correctamente a Redis");
+});
 redisClient.on("error", (err) =>
   console.error("[Redis] ❌ Error en Redis:", err)
 );

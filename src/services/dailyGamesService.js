@@ -14,16 +14,16 @@ import { cacheAllDailyGames, getAllDailyGamesCache } from "./cacheService.js";
  */
 export const getCachedAllDailyGames = async () => {
   try {
-    console.log("[v1] getCachedAllDailyGames - START");
+    // console.log("[v1] getCachedAllDailyGames - START");
 
     // 1️⃣ Verificar si está en cache
     const cached = await getAllDailyGamesCache();
     if (cached) {
-      console.log("[v1] Returning daily games from CACHE");
+      // console.log("[v1] Returning daily games from CACHE");
       return cached;
     }
 
-    console.log("[v1] Cache empty → fetching from DB");
+    // console.log("[v1] Cache empty → fetching from DB");
 
     // 2️⃣ Obtener todos los juegos del día en paralelo
     const [
@@ -42,7 +42,7 @@ export const getCachedAllDailyGames = async () => {
       getDailyVideoGame(),
     ]);
 
-    console.log("[v1] Games fetched from DB");
+    // console.log("[v1] Games fetched from DB");
 
     // 🔧 Agregar tipo y normalizar clubId
     const normalize = (games, type) =>
@@ -62,7 +62,7 @@ export const getCachedAllDailyGames = async () => {
       ...normalize(videoGames, "video"),
     ];
 
-    console.log("[v1] Total games:", allGames.length);
+    // console.log("[v1] Total games:", allGames.length);
 
     // 4️⃣ Agrupar por clubId
     const clubs = {};
@@ -82,12 +82,12 @@ export const getCachedAllDailyGames = async () => {
       clubs[clubKey].totalGames++;
     }
 
-    console.log("[v1] Clubs grouped:", Object.keys(clubs).length);
+    // console.log("[v1] Clubs grouped:", Object.keys(clubs).length);
 
     // 5️⃣ Cachear 24hs
     await cacheAllDailyGames(clubs);
 
-    console.log("[v1] Daily games cached successfully");
+    // console.log("[v1] Daily games cached successfully");
 
     return clubs;
   } catch (error) {

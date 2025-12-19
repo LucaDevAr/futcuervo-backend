@@ -170,12 +170,12 @@ export const saveGameAttempt = async (userId, gameData) => {
       runValidators: true,
     });
 
-    console.log(
-      "[v0] Game attempt upserted:",
-      attempt._id,
-      "with streak:",
-      calculatedStreak
-    );
+    // console.log(
+    //   "[v0] Game attempt upserted:",
+    //   attempt._id,
+    //   "with streak:",
+    //   calculatedStreak
+    // );
 
     // Actualizar puntos según el flujo
     const pointsAdded = await updatePoints({
@@ -184,7 +184,7 @@ export const saveGameAttempt = async (userId, gameData) => {
       won: gameData.won,
     });
 
-    console.log("[v0] Points added:", pointsAdded);
+    // console.log("[v0] Points added:", pointsAdded);
 
     // Invalidar cache del usuario después de guardar/actualizar intento
     await invalidateUserStatsCache(userId);

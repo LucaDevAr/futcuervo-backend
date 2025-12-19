@@ -5,12 +5,12 @@ import { getPlayersCache, setPlayersCache } from "../services/cacheService.js";
 // Get all players with populated data
 export const getAllPlayers = async (req, res) => {
   try {
-    console.log("[v0] GET /api/players - Fetching all players");
+    // console.log("[v0] GET /api/players - Fetching all players");
 
     // Try to get from cache first
     const cachedPlayers = await getPlayersCache("all");
     if (cachedPlayers) {
-      console.log("[v0] Returning players from cache:", cachedPlayers.length);
+      // console.log("[v0] Returning players from cache:", cachedPlayers.length);
       return res.json({
         players: cachedPlayers,
         fromCache: true,
@@ -18,7 +18,7 @@ export const getAllPlayers = async (req, res) => {
     }
 
     // If not in cache, fetch from database
-    console.log("[v0] Cache miss, fetching players from database");
+    // console.log("[v0] Cache miss, fetching players from database");
 
     const players = await Player.find({})
       .populate({
@@ -36,7 +36,7 @@ export const getAllPlayers = async (req, res) => {
       .sort({ createdAt: -1 })
       .lean();
 
-    console.log("[v0] Fetched players from DB:", players.length);
+    // console.log("[v0] Fetched players from DB:", players.length);
 
     // Cache the result until midnight
     await setPlayersCache("all", players);
@@ -95,15 +95,15 @@ export const getPlayersByClubId = async (req, res) => {
       return res.status(400).json({ message: "Invalid clubId format" });
     }
 
-    console.log(`[v0] Fetching players with club ${clubId} in their career`);
+    // console.log(`[v0] Fetching players with club ${clubId} in their career`);
 
     // Try to get from cache first
     const cachedPlayers = await getPlayersCache(`club_${clubId}`);
     if (cachedPlayers) {
-      console.log(
-        `[v0] Returning players from cache for club ${clubId}:`,
-        cachedPlayers.length
-      );
+      // console.log(
+      //   `[v0] Returning players from cache for club ${clubId}:`,
+      //   cachedPlayers.length
+      // );
       return res.json({
         players: cachedPlayers,
         fromCache: true,
@@ -129,7 +129,7 @@ export const getPlayersByClubId = async (req, res) => {
       .sort({ createdAt: -1 })
       .lean();
 
-    console.log(`[v0] Found ${players.length} players for club ${clubId}`);
+    // console.log(`[v0] Found ${players.length} players for club ${clubId}`);
 
     // Cache the result until midnight
     await setPlayersCache(`club_${clubId}`, players);

@@ -185,7 +185,7 @@ export const me = async (req, res) => {
   try {
     if (!req.user) return res.status(401).json({ user: null });
 
-    console.log("[AUTH] /me → usuario:", req.user.id);
+    // console.log("[AUTH] /me → usuario:", req.user.id);
 
     // 🔥 SIEMPRE leer desde MongoDB, nunca desde JWT
     const dbUser = await User.findById(req.user.id).lean();
