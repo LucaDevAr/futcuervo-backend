@@ -2,7 +2,7 @@
 export const cookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production", // true en prod
-  sameSite: "lax",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   path: "/",
   // maxAge se define por cookie si hace falta
 };
