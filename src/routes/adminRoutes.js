@@ -91,7 +91,7 @@ router.delete("/player-games/:id", gamesController.deletePlayerGame);
 router.get("/video-games", videoGameController.getVideoGames);
 router.get("/video-games/:id", videoGameController.getVideoGameById);
 router.post("/video-games", videoGameController.createVideoGame);
-router.put("/video-games/:id", videoGameController.updateVideoGame);
+router.patch("/video-games/:id", videoGameController.updateVideoGameClip);
 router.delete("/video-games/:id", videoGameController.deleteVideoGame);
 
 // ===== COUNTRIES ROUTES =====

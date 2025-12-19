@@ -2,15 +2,22 @@ import { createClient } from "redis";
 import dotenv from "dotenv";
 dotenv.config();
 
-// Construimos manualmente la URL de conexión
-const redisUrl = `redis://default:${process.env.REDIS_PASSWORD}@${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`;
+const {
+  REDIS_PASSWORD,
+  REDIS_HOST = "127.0.0.1",
+  REDIS_PORT = "6379",
+} = process.env;
+
+// Construcción segura de la URL
+const redisUrl = REDIS_PASSWORD
+  ? `redis://default:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}`
+  : `redis://${REDIS_HOST}:${REDIS_PORT}`;
 
 console.log("[Redis] Intentando conectar a:", redisUrl);
 
 export const redisClient = createClient({
   url: redisUrl,
   socket: {
-    // Evita problemas IPv6/DNS en Railway
     family: 0,
     reconnectStrategy: (retries) => {
       console.log(`[Redis] Reintentando conexión… intento #${retries}`);
@@ -19,7 +26,6 @@ export const redisClient = createClient({
   },
 });
 
-// Logs
 redisClient.on("connect", () =>
   console.log("[Redis] ✅ Conectado correctamente a Redis")
 );

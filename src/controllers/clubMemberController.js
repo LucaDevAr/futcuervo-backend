@@ -2,7 +2,7 @@ import ClubMember from "../models/ClubMember.js";
 
 export const joinClub = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user.id;
     const { clubId, role } = req.body;
 
     if (!clubId || !role) {
@@ -23,21 +23,43 @@ export const joinClub = async (req, res) => {
 
     // Crear membresía
     const member = await ClubMember.create({ userId, clubId, role });
-    res.json({ success: true, member });
+
+    // 💥 populate
+    const populated = await member.populate("clubId");
+
+    return res.json({
+      success: true,
+      membership: {
+        id: populated._id.toString(),
+        role: populated.role,
+        joinedDate: populated.joinedDate || populated.createdAt,
+        points: populated.points ?? 0,
+        club: {
+          id: populated.clubId._id.toString(),
+          name: populated.clubId.name,
+          logo: populated.clubId.logo,
+          league: populated.clubId.league,
+          members: populated.clubId.members,
+          points: populated.clubId.points ?? 0,
+          updatedAt: populated.clubId.updatedAt,
+        },
+      },
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Error al unirse al club" });
   }
 };
+
 export const leaveClub = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user.id;
     const { clubId, role } = req.body;
 
     const membership = await ClubMember.findOne({ userId, clubId, role });
 
     if (!membership) {
-      return res.status(404).json({ error: "No estás en este club" });
+      return res.status(403).json({ error: "No estás en este club" });
     }
 
     // ✅ Usar joinedDate si existe o fallback a createdAt
@@ -64,7 +86,7 @@ export const leaveClub = async (req, res) => {
 
 export const getMyClubs = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user.id;
 
     const clubs = await ClubMember.find({ userId }).populate("clubId");
 

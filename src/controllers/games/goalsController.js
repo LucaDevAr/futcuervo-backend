@@ -10,7 +10,6 @@ export const saveGoalsGameAttempt = async (req, res) => {
     const gameData = {
       ...req.body,
       gameType: "goals",
-      date: new Date(),
     };
 
     if (!userId) {

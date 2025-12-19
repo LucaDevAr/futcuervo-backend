@@ -15,7 +15,6 @@ export const saveShirtGameAttempt = async (req, res) => {
     const gameData = {
       ...req.body,
       gameType: "shirt",
-      date: new Date(),
     };
 
     console.log("[v0] Saving shirt game attempt:", {

@@ -153,16 +153,27 @@ export const updatePlayer = async (req, res) => {
         to: period.to ? new Date(period.to) : undefined,
       })) || [];
 
-    const clubsStats =
-      data.clubsStats?.map((stat) => ({
-        club: stat.club,
-        clubName: stat.clubName,
-        goals: stat.goals || 0,
-        appearances: stat.appearances || 0,
-        assists: stat.assists || 0,
-        yellowCards: stat.yellowCards || 0,
-        redCards: stat.redCards || 0,
-      })) || [];
+    const clubsStats = data.clubsStats?.map(
+      ({
+        club,
+        clubName,
+        goals,
+        appearances,
+        assists,
+        yellowCards,
+        redCards,
+        actionImage,
+      }) => ({
+        club,
+        clubName,
+        goals,
+        appearances,
+        assists,
+        yellowCards,
+        redCards,
+        actionImage,
+      })
+    );
 
     const processedData = {
       ...data,

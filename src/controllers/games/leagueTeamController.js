@@ -10,7 +10,6 @@ export const saveLeagueTeamAttempt = async (req, res) => {
     const gameData = {
       ...req.body,
       gameType: "league",
-      date: new Date(),
     };
 
     if (!userId) {

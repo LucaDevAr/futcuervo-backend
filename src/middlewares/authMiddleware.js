@@ -1,81 +1,42 @@
-import { checkSession } from "../services/sessionService.js";
+// backend/middleware/requireAuth.js
+import { verifyAccessToken } from "../utils/jwt.js";
 
-export const requireAuth = async (req, res, next) => {
+export const requireAuth = (req, res, next) => {
   try {
-    console.log("[v0] Auth middleware - full request headers:", req.headers);
-    console.log("[v0] Auth middleware - cookies:", req.cookies);
-    console.log("[v0] Auth middleware - cookie header:", req.headers.cookie);
+    const token = req.cookies?.accessToken;
+    if (!token) return res.status(401).json({ error: "No authenticated" });
 
-    const sessionId = req.cookies.sessionId;
-    console.log("[v0] Auth middleware - sessionId:", sessionId);
+    const payload = verifyAccessToken(token);
+    if (!payload)
+      return res.status(401).json({ error: "Invalid or expired token" });
 
-    if (!sessionId) {
-      console.log("[v0] Auth middleware - no sessionId found");
-      return res.status(401).json({ error: "Not authenticated" });
-    }
-
-    const userData = await checkSession(sessionId);
-    console.log("[v0] Auth middleware - userData from checkSession:", userData);
-
-    if (!userData) {
-      console.log("[v0] Auth middleware - invalid session");
-      return res.status(401).json({ error: "Invalid session" });
-    }
-
-    // Agregar el usuario al request con ambos formatos para compatibilidad
+    // Attach user info to req.user (minimal fields)
     req.user = {
-      _id: userData.id,
-      id: userData.id,
-      name: userData.name,
-      email: userData.email,
-      image: userData.image,
-      role: userData.role,
+      id: payload.id,
+      role: payload.role,
+      name: payload.name,
+      email: payload.email,
+      image: payload.image,
     };
 
-    console.log("[v0] Auth middleware - user added to req:", req.user);
-    next();
-  } catch (error) {
-    console.error("[v0] Auth middleware error:", error);
-    res.status(401).json({ error: "Authentication failed" });
+    return next();
+  } catch (err) {
+    console.error("requireAuth error", err);
+    return res.status(401).json({ error: "Auth failed" });
   }
 };
 
-export const requireAdmin = async (req, res, next) => {
-  try {
-    // First check authentication using existing requireAuth
-    const sessionId = req.cookies.sessionId;
+export const requireAdmin = (req, res, next) => {
+  const token = req.cookies?.accessToken;
+  if (!token) return res.status(401).json({ error: "No autenticado" });
 
-    if (!sessionId) {
-      return res.status(401).json({ error: "No autenticado" });
-    }
+  const payload = verifyAccessToken(token);
 
-    const userData = await checkSession(sessionId);
+  if (!payload) return res.status(401).json({ error: "Token inválido" });
+  if (payload.role !== "admin")
+    return res.status(403).json({ error: "No autorizado" });
 
-    if (!userData) {
-      return res.status(401).json({ error: "Sesión inválida" });
-    }
+  req.user = payload;
 
-    // Add user to request
-    req.user = {
-      _id: userData.id,
-      id: userData.id,
-      name: userData.name,
-      email: userData.email,
-      image: userData.image,
-      role: userData.role,
-    };
-
-    // Check if user is admin
-    if (req.user.role !== "admin") {
-      return res
-        .status(403)
-        .json({ error: "Acceso denegado. Se requiere rol de administrador" });
-    }
-
-    console.log("[v0] Admin middleware - admin user verified:", req.user.email);
-    next();
-  } catch (error) {
-    console.error("[v0] Admin middleware error:", error);
-    res.status(403).json({ error: "Acceso denegado" });
-  }
+  next();
 };

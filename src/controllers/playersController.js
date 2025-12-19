@@ -1,9 +1,25 @@
 import Player from "../models/Player.js";
 import mongoose from "mongoose";
+import { getPlayersCache, setPlayersCache } from "../services/cacheService.js";
 
 // Get all players with populated data
 export const getAllPlayers = async (req, res) => {
   try {
+    console.log("[v0] GET /api/players - Fetching all players");
+
+    // Try to get from cache first
+    const cachedPlayers = await getPlayersCache("all");
+    if (cachedPlayers) {
+      console.log("[v0] Returning players from cache:", cachedPlayers.length);
+      return res.json({
+        players: cachedPlayers,
+        fromCache: true,
+      });
+    }
+
+    // If not in cache, fetch from database
+    console.log("[v0] Cache miss, fetching players from database");
+
     const players = await Player.find({})
       .populate({
         path: "career.club",
@@ -17,9 +33,18 @@ export const getAllPlayers = async (req, res) => {
         path: "clubsStats.club",
         select: "name logo",
       })
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
-    res.json(players);
+    console.log("[v0] Fetched players from DB:", players.length);
+
+    // Cache the result until midnight
+    await setPlayersCache("all", players);
+
+    res.json({
+      players,
+      fromCache: false,
+    });
   } catch (error) {
     console.error("Error fetching players:", error);
     res.status(500).json({ message: "Error al obtener jugadores" });
@@ -70,9 +95,20 @@ export const getPlayersByClubId = async (req, res) => {
       return res.status(400).json({ message: "Invalid clubId format" });
     }
 
-    console.log(
-      `[Backend] Fetching players with club ${clubId} in their career`
-    );
+    console.log(`[v0] Fetching players with club ${clubId} in their career`);
+
+    // Try to get from cache first
+    const cachedPlayers = await getPlayersCache(`club_${clubId}`);
+    if (cachedPlayers) {
+      console.log(
+        `[v0] Returning players from cache for club ${clubId}:`,
+        cachedPlayers.length
+      );
+      return res.json({
+        players: cachedPlayers,
+        fromCache: true,
+      });
+    }
 
     // Find players where career.club array contains the clubId
     const players = await Player.find({
@@ -90,11 +126,18 @@ export const getPlayersByClubId = async (req, res) => {
         path: "clubsStats.club",
         select: "name logo",
       })
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
-    console.log(`[Backend] Found ${players.length} players for club ${clubId}`);
+    console.log(`[v0] Found ${players.length} players for club ${clubId}`);
 
-    res.json(players);
+    // Cache the result until midnight
+    await setPlayersCache(`club_${clubId}`, players);
+
+    res.json({
+      players,
+      fromCache: false,
+    });
   } catch (error) {
     console.error("Error fetching players by club ID:", error);
     res.status(500).json({ message: "Error al obtener jugadores por club" });

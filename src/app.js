@@ -1,9 +1,15 @@
-import express from "express";
-import cors from "cors";
-import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
-import passport from "./config/passport.js";
+dotenv.config({ override: true });
+import express from "express";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import compression from "compression"; // Add compression
 import connectDB from "./config/db.js";
+import {
+  globalLimiter,
+  authLimiter,
+  apiLimiter,
+} from "./middlewares/rateLimitMiddleware.js";
 
 // Importar rutas
 import authRoutes from "./routes/auth.js";
@@ -26,11 +32,13 @@ import videoRoutes from "./routes/admin/videoRoutes.js";
 import videoGameRoutes from "./routes/games/videoGameRoutes.js";
 import clubMemberRoutes from "./routes/clubMemberRoutes.js";
 
-dotenv.config();
 connectDB();
 
 const app = express();
 app.set("trust proxy", 1); // 👈 Necesario en Railway
+
+const DEBUG =
+  process.env.NODE_ENV === "development" || process.env.DEBUG_LOGS === "true";
 
 app.use(
   cors({
@@ -38,14 +46,32 @@ app.use(
     credentials: true,
   })
 );
-
 app.use(cookieParser());
+
+app.use(
+  compression({
+    level: 6, // Balance between compression ratio and CPU
+    threshold: 1024, // Only compress responses > 1KB
+    filter: (req, res) => {
+      if (req.headers["x-no-compression"]) {
+        return false;
+      }
+      return compression.filter(req, res);
+    },
+  })
+);
+
+// app.use(globalLimiter);
+// app.use("/api/auth", authLimiter);
+// app.use("/api/", apiLimiter);
+
 app.use(express.json());
-app.use(passport.initialize());
 
 // Debug middleware global
 app.use((req, res, next) => {
-  console.log(`[v0] App - ${req.method} ${req.path}`);
+  if (DEBUG) {
+    console.log(`[v0] App - ${req.method} ${req.path}`);
+  }
   next();
 });
 
@@ -109,7 +135,9 @@ app.use((err, req, res, next) => {
 
 // 404 handler
 app.use((req, res) => {
-  console.log(`404 - Route not found: ${req.method} ${req.path}`);
+  if (DEBUG) {
+    console.log(`404 - Route not found: ${req.method} ${req.path}`);
+  }
   res.status(404).json({ error: "Route not found" });
 });
 

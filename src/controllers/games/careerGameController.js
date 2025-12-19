@@ -10,7 +10,6 @@ export const saveCareerGameAttempt = async (req, res) => {
     const gameData = {
       ...req.body,
       gameType: "career",
-      date: new Date(),
     };
 
     if (!userId) {

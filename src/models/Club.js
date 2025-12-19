@@ -8,14 +8,19 @@ const ClubSchema = new Schema(
     logo: String,
     league: { type: Schema.Types.ObjectId, ref: "League", required: true },
 
-    // Puntos globales del club
-    points: { type: Number, default: 0 },
+    transfermarktId: {
+      type: String,
+      sparse: true,
+    },
 
-    // Para cachear cantidad de miembros (opcional)
+    points: { type: Number, default: 0 },
     members: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
+
+// 🔒 ÍNDICE REAL Y SEGURO
+ClubSchema.index({ transfermarktId: 1 }, { unique: true, sparse: true });
 
 const Club = models.Club || model("Club", ClubSchema);
 export default Club;

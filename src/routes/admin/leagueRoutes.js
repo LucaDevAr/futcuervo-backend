@@ -5,7 +5,7 @@ import {
   getLeagueById,
   updateLeague,
   deleteLeague,
-} from "../../controllers/admin/leaguesController.js";
+} from "../../controllers/leaguesController.js";
 
 const router = express.Router();
 

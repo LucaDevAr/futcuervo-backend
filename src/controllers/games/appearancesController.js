@@ -10,7 +10,6 @@ export const saveAppearancesGameAttempt = async (req, res) => {
     const gameData = {
       ...req.body,
       gameType: "appearances",
-      date: new Date(),
     };
 
     if (!userId) {

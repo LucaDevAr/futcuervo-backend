@@ -21,6 +21,7 @@ export const savePlayerGameAttempt = async (req, res) => {
       timeUsed,
       livesRemaining,
       gameData, // ✅ SE USA DIRECTO - TAL CUAL
+      date,
     } = req.body;
 
     // ✅ Objeto de intento tal cual requiere el modelo
@@ -29,7 +30,7 @@ export const savePlayerGameAttempt = async (req, res) => {
       clubId: clubId || null,
       gameType: "player", // Esto sí es fijo porque es juego de jugador
       gameMode: gameMode || "normal",
-      date: new Date(),
+      date: date || new Date().toISOString(),
       won: !!won,
       streak: streak || 0,
       score: score || 0,

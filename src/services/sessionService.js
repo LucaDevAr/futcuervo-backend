@@ -1,52 +1,17 @@
-import { redisClient } from "../utils/redisClient.js";
+// Using Redis for sessions with 100k daily users = wasted memory
+// JWT is stateless and persists in cookies (7-30 days)
 
 export const checkSession = async (sessionId) => {
-  try {
-    if (!sessionId) return null;
-
-    console.log("[v0] checkSession - looking for sessionId:", sessionId);
-    const userData = await redisClient.get(`session:${sessionId}`);
-    console.log("[v0] checkSession - raw userData from Redis:", userData);
-
-    if (!userData) return null;
-
-    const parsedData = JSON.parse(userData);
-    console.log("[v0] checkSession - parsed userData:", parsedData);
-    return parsedData;
-  } catch (error) {
-    console.error("[v0] checkSession error:", error);
-    return null;
-  }
+  // No-op: JWT tokens are handled by cookies and auth middleware
+  return null;
 };
 
 export const createSession = async (userId, userData) => {
-  const sessionId = `sess_${Date.now()}_${Math.random()
-    .toString(36)
-    .substr(2, 9)}`;
-  try {
-    console.log("[v0] createSession - sessionId:", sessionId);
-    console.log("[v0] createSession - userData to store:", userData);
-
-    const serializedData = JSON.stringify(userData);
-    console.log("[v0] createSession - serialized data:", serializedData);
-
-    await redisClient.set(`session:${sessionId}`, serializedData, {
-      EX: 60 * 60 * 24, // 1 día
-    });
-
-    console.log("[v0] createSession - data stored successfully");
-    return sessionId;
-  } catch (error) {
-    console.error("[v0] createSession error:", error);
-    throw error;
-  }
+  // No-op: JWT creation is handled in authController
+  return null;
 };
 
 export const deleteSession = async (sessionId) => {
-  try {
-    await redisClient.del(`session:${sessionId}`);
-    console.log("[v0] deleteSession - session deleted:", sessionId);
-  } catch (error) {
-    console.error("[v0] deleteSession error:", error);
-  }
+  // No-op: JWT invalidation is handled server-side via refresh token
+  return true;
 };

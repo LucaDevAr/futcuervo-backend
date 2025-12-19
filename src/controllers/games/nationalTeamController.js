@@ -10,7 +10,6 @@ export const saveNationalGameAttempt = async (req, res) => {
     const gameData = {
       ...req.body,
       gameType: "national",
-      date: new Date(),
     };
 
     if (!userId) {
