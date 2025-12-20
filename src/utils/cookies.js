@@ -22,13 +22,35 @@ export const setAuthCookies = (res, accessToken, refreshToken) => {
 };
 
 export const clearAuthCookies = (res) => {
+  // 1️⃣ sin domain (host-only: api.futcuervo.com)
   res.clearCookie("accessToken", {
-    ...cookieOptions,
-    maxAge: 0,
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/",
   });
 
   res.clearCookie("refreshToken", {
-    ...cookieOptions,
-    maxAge: 0,
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/",
+  });
+
+  // 2️⃣ con domain global (.futcuervo.com)
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/",
+    domain: ".futcuervo.com",
+  });
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/",
+    domain: ".futcuervo.com",
   });
 };
