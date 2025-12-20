@@ -1,9 +1,9 @@
 export const cookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  secure: true,
+  sameSite: "none",
   path: "/",
-  // ❌ NO domain
+  domain: ".futcuervo.com",
 };
 
 export const setAuthCookies = (res, accessToken, refreshToken) => {
@@ -19,11 +19,7 @@ export const setAuthCookies = (res, accessToken, refreshToken) => {
 };
 
 export const clearAuthCookies = (res) => {
-  res.clearCookie("accessToken", {
-    ...cookieOptions,
-  });
-
-  res.clearCookie("refreshToken", {
-    ...cookieOptions,
-  });
+  // IMPORTANTE: mismo domain + path + flags
+  res.clearCookie("accessToken", cookieOptions);
+  res.clearCookie("refreshToken", cookieOptions);
 };
