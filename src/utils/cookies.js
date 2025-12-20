@@ -22,6 +22,13 @@ export const setAuthCookies = (res, accessToken, refreshToken) => {
 };
 
 export const clearAuthCookies = (res) => {
-  res.clearCookie("accessToken", { path: "/" });
-  res.clearCookie("refreshToken", { path: "/" });
+  res.clearCookie("accessToken", {
+    ...cookieOptions,
+    maxAge: 0,
+  });
+
+  res.clearCookie("refreshToken", {
+    ...cookieOptions,
+    maxAge: 0,
+  });
 };
