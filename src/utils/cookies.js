@@ -23,3 +23,21 @@ export const clearAuthCookies = (res) => {
   res.clearCookie("accessToken", cookieOptions);
   res.clearCookie("refreshToken", cookieOptions);
 };
+
+export const setAuthHintCookie = (res) => {
+  res.cookie("auth_hint", "1", {
+    httpOnly: false,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 días
+  });
+};
+
+export const clearAuthHintCookie = (res) => {
+  res.cookie("auth_hint", "", {
+    httpOnly: false,
+    expires: new Date(0),
+    path: "/",
+  });
+};

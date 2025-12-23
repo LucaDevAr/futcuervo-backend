@@ -11,6 +11,8 @@ import {
   setAuthCookies,
   clearAuthCookies,
   cookieOptions,
+  setAuthHintCookie,
+  clearAuthHintCookie,
 } from "../utils/cookies.js";
 import ClubMember from "../models/ClubMember.js";
 import { getAllAttemptsByUser } from "../services/gameStatsService.js";
@@ -50,6 +52,7 @@ export const register = async (req, res) => {
     const access = signAccessToken(payload);
     const refresh = signRefreshToken({ id: user._id.toString() });
     setAuthCookies(res, access, refresh);
+    setAuthHintCookie(res);
 
     return res.status(201).json({ user: payload });
   } catch (err) {
@@ -88,6 +91,7 @@ export const login = async (req, res) => {
     const refresh = signRefreshToken({ id: user._id.toString() });
 
     setAuthCookies(res, access, refresh);
+    setAuthHintCookie(res);
     return res.json({ user: payload });
   } catch (err) {
     console.error("login error", err);
@@ -174,8 +178,8 @@ export const googleCallback = async (req, res) => {
     const access = signAccessToken(payload);
     const refresh = signRefreshToken({ id: user._id.toString() });
     setAuthCookies(res, access, refresh);
-
-    return res.redirect(FRONTEND_URL);
+    setAuthHintCookie(res);
+    return res.redirect(`${FRONTEND_URL}`);
   } catch (err) {
     console.error("googleCallback error", err);
     return res.redirect(`${FRONTEND_URL}/auth/error`);
@@ -253,6 +257,7 @@ export const me = async (req, res) => {
 export const logout = async (req, res) => {
   try {
     clearAuthCookies(res);
+    clearAuthHintCookie(res);
     return res.json({ ok: true });
   } catch (err) {
     console.error("logout error", err);
@@ -268,7 +273,6 @@ export const refresh = async (req, res) => {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken)
       return res.status(401).json({ error: "No refresh token" });
-
     const payload = verifyRefreshToken(refreshToken);
     if (!payload)
       return res.status(401).json({ error: "Invalid refresh token" });
