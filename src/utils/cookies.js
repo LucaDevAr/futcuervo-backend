@@ -26,18 +26,18 @@ export const clearAuthCookies = (res) => {
 
 export const setAuthHintCookie = (res) => {
   res.cookie("auth_hint", "1", {
-    httpOnly: false,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    httpOnly: false, // se lee en JS
+    secure: true, // obligatorio en https
+    sameSite: "none", // frontend y backend en subdominios
     path: "/",
-    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 días
+    domain: ".futcuervo.com", // 🔥 CLAVE
+    maxAge: 30 * 24 * 60 * 60 * 1000,
   });
 };
 
 export const clearAuthHintCookie = (res) => {
-  res.cookie("auth_hint", "", {
-    httpOnly: false,
-    expires: new Date(0),
+  res.clearCookie("auth_hint", {
     path: "/",
+    domain: ".futcuervo.com",
   });
 };
